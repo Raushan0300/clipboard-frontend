@@ -6,7 +6,6 @@ const Home = () => {
   const [text, setText] = useState<string>("");
   const [code, setCode] = useState<string>("");
   const [codeText, setCodeText] = useState<string>("");
-
   const [showText, setShowText] = useState<string>("");
 
   const [isLoadingSave, setIsLoadingSave] = useState<boolean>(false);
@@ -99,19 +98,22 @@ const Home = () => {
             {isLoadingShow ? "Loading..." : "Show"}
           </button>
         </form>
-        <textarea
-          className="homeTextArea1"
-          value={showText}
-          readOnly
-        />
         {showText && (
-          <button
-            className="homeCopyBtn"
-            onClick={() => {
-              handleCopy();
-            }}>
-            Copy
-          </button>
+          <>
+            <textarea
+              className="homeTextArea1"
+              value={showText}
+              readOnly
+            />
+
+            <button
+              className="homeCopyBtn"
+              onClick={() => {
+                handleCopy();
+              }}>
+              Copy
+            </button>
+          </>
         )}
       </div>
     </div>
