@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:8000";
+// const baseURL = "http://localhost:8000";
+const baseURL = "https://clipboard-backend-6x5c.onrender.com";
 
 const getData = async (url: string, customHeaders = {}) => {
   const headers = {
