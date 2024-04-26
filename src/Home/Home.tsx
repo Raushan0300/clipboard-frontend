@@ -93,6 +93,7 @@ const Home = () => {
             onChange={(e) => {
               setCode(e.target.value);
             }}
+            maxLength={4}
           />
           <button className="homeBtn1">
             {isLoadingShow ? "Loading..." : "Show"}
