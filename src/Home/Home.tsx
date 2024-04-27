@@ -25,6 +25,7 @@ const Home = () => {
   const handleShow = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoadingShow(true);
+    setShowText("");
     const response = await getData("show", { code: code });
     if (response) {
       setShowText(response.text);
