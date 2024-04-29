@@ -11,9 +11,9 @@ const getData = async (url: string, customHeaders = {}) => {
   return response.data;
 };
 
-const postData = async (url: string, body: any) => {
+const postData = async (url: string, body: any, options:any) => {
   
-  const response = await axios.post(`${baseURL}/${url}`, body);
+  const response = await axios.post(`${baseURL}/${url}`, body, options);
   return response.data;
 };
 

@@ -19,12 +19,12 @@ const Home = () => {
   const [selectedFileName, setSelectedFileName] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoadingSave(true);
-    const response = await postData("save", { text: text });
+    const response = await postData("save", { text: text }, {});
     console.log(response);
     if (response) {
       setCodeText(response.code);
@@ -71,22 +71,36 @@ const Home = () => {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCodeText("");
   
     if (!selectedFile) {
       alert('Please select a file');
+      return;
+    };
+
+    if (selectedFile.size > 100 * 1024 * 1024) {
+      alert("File is too large, please select a file less than 100MB.");
+      setIsLoadingSave(false);
       return;
     }
   
     setIsLoadingSave(true);
   
     try {
+      const config = {
+        onUploadProgress: function(progressEvent: ProgressEvent) {
+          let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        }
+      };
+
       const formData = new FormData();
       formData.append('file', selectedFile);
   
       console.log('Selected File:', selectedFile);
       console.log('FormData:', formData);
   
-      const response = await postData('upload', formData);
+      const response = await postData('upload', formData, config);
   
       // console.log('File uploaded:', response.data);
       setCodeText(response.code);
@@ -166,7 +180,10 @@ const Home = () => {
     <button type="submit" className="homeBtn">
       {isLoadingSave ? "Loading..." : "Save Copy"}
     </button>
-    {/* {isLoadingSave&&<progress value={uploadProgress} max="100" />} */}
+    {isLoadingSave&&<div className="progress-bar">
+  <div className="progress-bar-fill" style={{width: `${uploadProgress}%`}}></div>
+  <div className="progress-bar-text">{uploadProgress}%</div>
+</div>}
   </form>
 )}
 
