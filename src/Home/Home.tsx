@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./Home.css";
 import { getData, postData } from "../Config";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
 
 const Home = () => {
   const [text, setText] = useState<string>("");
@@ -10,6 +12,14 @@ const Home = () => {
 
   const [isLoadingSave, setIsLoadingSave] = useState<boolean>(false);
   const [isLoadingShow, setIsLoadingShow] = useState<boolean>(false);
+
+  const [isText, setIsText] = useState<boolean>(false);
+  const [isFile, setIsFile] = useState<boolean>(false);
+
+  const [selectedFileName, setSelectedFileName] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,9 +36,16 @@ const Home = () => {
     e.preventDefault();
     setIsLoadingShow(true);
     setShowText("");
-    const response = await getData("show", { code: code });
-    if (response) {
+    const response = await getData("show", { code: code, responseType: 'blob' });
+    if (response.text) {
       setShowText(response.text);
+    } else{
+      window.open(`https://drive.google.com/uc?export=download&id=${response.fileId}`)
+//       let link = document.createElement('a');
+// link.href = `https://drive.google.com/uc?export=download&id=${response.fileId}`;
+// document.body.appendChild(link);
+// link.click();
+// document.body.removeChild(link);
     }
     setIsLoadingShow(false);
   };
@@ -45,11 +62,67 @@ const Home = () => {
     navigator.clipboard.writeText(codeText);
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0] ?? null;
+    setSelectedFile(selectedFile);
+    // console.log('Selected File:', selectedFile);
+  };
+  
+
+  const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    if (!selectedFile) {
+      alert('Please select a file');
+      return;
+    }
+  
+    setIsLoadingSave(true);
+  
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+  
+      console.log('Selected File:', selectedFile);
+      console.log('FormData:', formData);
+  
+      const response = await postData('upload', formData);
+  
+      // console.log('File uploaded:', response.data);
+      setCodeText(response.code);
+      setIsLoadingSave(false);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setIsLoadingSave(false);
+    }
+  };
+  
+
   return (
     <div className="homeMainDiv">
       <div className="homeLeftDiv">
-        <div className="homeTitleText">Copy Text</div>
-        <form
+        <div className="homeTitleText">Copy</div>
+        <div className="homeBtnDiv">
+          <button
+            className="homeBtn"
+            onClick={() => {
+              setIsText(true);
+              setIsFile(false);
+              setCodeText("");
+            }}>
+            Text
+          </button>
+          <button
+            className="homeBtn"
+            onClick={() => {
+              setIsFile(true);
+              setIsText(false);
+              setCodeText("");
+            }}>
+            File
+          </button>
+          </div>
+        {isText&&<form
           action="submit"
           className="homeForm"
           onSubmit={handleSave}>
@@ -66,7 +139,37 @@ const Home = () => {
             className="homeBtn">
             {isLoadingSave ? "Loading..." : "Save Copy"}
           </button>
-        </form>
+        </form>}
+
+        {isFile && (
+  <form action="submit" className="homeForm" encType="multipart/form-data" onSubmit={handleUpload}>
+    <label htmlFor="fileInput" className="customFileInput">
+      <span className="icon">
+        <FontAwesomeIcon icon={faUpload} />
+      </span>
+      <span className="homeFileNameText">{selectedFileName || 'Choose a file...'}</span>
+    </label>
+    <input
+      type="file"
+      id="fileInput"
+      className="hidden"
+      onChange={(e) => {
+        handleFileChange(e);
+        const file = e.target.files?.[0];
+        if (file) {
+          setSelectedFileName(file.name);
+          const reader = new FileReader();
+          reader.readAsText(file);
+        }
+      }}
+    />
+    <button type="submit" className="homeBtn">
+      {isLoadingSave ? "Loading..." : "Save Copy"}
+    </button>
+    {/* {isLoadingSave&&<progress value={uploadProgress} max="100" />} */}
+  </form>
+)}
+
         {codeText && (
           <div className="homeCode">
             {`Code - ${codeText}`}{" "}
@@ -81,7 +184,7 @@ const Home = () => {
         )}
       </div>
       <div className="homeRightDiv">
-        <div className="homeTitleText">Reveal Text</div>
+        <div className="homeTitleText">Reveal</div>
         <form
           action="submit"
           className="homeForm"

@@ -11,7 +11,7 @@
   height: 100%;
 }
 .homeForm {
-  margin-top: 20vh;
+  margin-top: 5vh;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -119,6 +119,38 @@
   cursor: pointer;
   font-family: "Open Sans";
 }
+.homeBtnDiv{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2vh;
+}
+.customFileInput {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+.customFileInput:hover {
+  background-color: #0056b3;
+}
+.customFileInput .icon {
+  margin-right: 10px;
+}
+.hidden {
+  display: none;
+}
+.homeFileNameText{
+  font-size: 12px;
+  font-weight: 500;
+  font-family: "Open Sans";
+  margin-top: 10px;
+}
 
 @media screen and (max-width: 768px) {
   .homeMainDiv {
@@ -173,5 +205,8 @@
   .homeCopyBtn {
     padding: 5px;
     font-size: 12px;
+  }
+  .homeBtnDiv{
+    flex-direction: column;
   }
 }
