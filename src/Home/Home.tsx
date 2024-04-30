@@ -74,9 +74,10 @@ document.body.removeChild(link);
     if(!/^\d*$/.test(inputValue)){
       return;
     } else if (parseInt(inputValue) > 2880) {
-      return;
+      setNumber('2880');
+    }else{
+      setNumber(inputValue);
     }
-    setNumber(inputValue);
   };
   
 
