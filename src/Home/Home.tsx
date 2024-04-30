@@ -113,6 +113,8 @@ const Home = () => {
   
 
   return (
+    <>
+    <div className="homeNoticeText">Your Data will be deleted within 24 hours automatically</div>
     <div className="homeMainDiv">
       <div className="homeLeftDiv">
         <div className="homeTitleText">Copy</div>
@@ -239,6 +241,7 @@ const Home = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

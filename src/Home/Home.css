@@ -180,6 +180,16 @@
   text-align: center;
   line-height: 20px;
 }
+.homeNoticeText{
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Open Sans";
+  text-align: center;
+  padding: 1vh;
+  color: #d22222;
+  background-color: #f5f5f5;
+
+}
 
 @media screen and (max-width: 768px) {
   .homeMainDiv {
