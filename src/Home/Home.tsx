@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./Home.css";
 import { getData, postData } from "../Config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +9,7 @@ const Home = () => {
   const [code, setCode] = useState<string>("");
   const [codeText, setCodeText] = useState<string>("");
   const [showText, setShowText] = useState<string>("");
+  const [number, setNumber] = useState<string>('');
 
   const [isLoadingSave, setIsLoadingSave] = useState<boolean>(false);
   const [isLoadingShow, setIsLoadingShow] = useState<boolean>(false);
@@ -24,7 +25,7 @@ const Home = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoadingSave(true);
-    const response = await postData("save", { text: text }, {});
+    const response = await postData("save", { text: text, time: number }, {});
     console.log(response);
     if (response) {
       setCodeText(response.code);
@@ -40,12 +41,12 @@ const Home = () => {
     if (response.text) {
       setShowText(response.text);
     } else{
-      window.open(`https://drive.google.com/uc?export=download&id=${response.fileId}`)
-//       let link = document.createElement('a');
-// link.href = `https://drive.google.com/uc?export=download&id=${response.fileId}`;
-// document.body.appendChild(link);
-// link.click();
-// document.body.removeChild(link);
+      // window.open(`https://drive.google.com/uc?export=download&id=${response.fileId}`)
+      let link = document.createElement('a');
+link.href = `https://drive.google.com/uc?export=download&id=${response.fileId}`;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
     }
     setIsLoadingShow(false);
   };
@@ -66,6 +67,16 @@ const Home = () => {
     const selectedFile = event.target.files?.[0] ?? null;
     setSelectedFile(selectedFile);
     // console.log('Selected File:', selectedFile);
+  };
+
+  const handleErrorNumChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
+    let inputValue = e.target.value;
+    if(!/^\d*$/.test(inputValue)){
+      return;
+    } else if (parseInt(inputValue) > 2880) {
+      return;
+    }
+    setNumber(inputValue);
   };
   
 
@@ -96,6 +107,7 @@ const Home = () => {
 
       const formData = new FormData();
       formData.append('file', selectedFile);
+      formData.append('time', number);
   
       console.log('Selected File:', selectedFile);
       console.log('FormData:', formData);
@@ -114,7 +126,7 @@ const Home = () => {
 
   return (
     <>
-    <div className="homeNoticeText">Your Data will be deleted within 24 hours automatically</div>
+    <div className="homeNoticeText">Your Data will be deleted within 24 hours automatically if you leave expiration time empty.</div>
     <div className="homeMainDiv">
       <div className="homeLeftDiv">
         <div className="homeTitleText">Copy</div>
@@ -150,6 +162,7 @@ const Home = () => {
               setText(e.target.value);
             }}
           />
+          <div className="homeExpireDiv">Expiration Time: <input type="text" className="homeExpireInput" maxLength={4} value={number} onChange={handleErrorNumChange} /> minutes. (max. 2880 minutes)</div>
           <button
             type="submit"
             className="homeBtn">
@@ -179,6 +192,7 @@ const Home = () => {
         }
       }}
     />
+    <div className="homeExpireDiv">Expiration Time <input type="text" className="homeExpireInput" maxLength={4} value={number} onChange={handleErrorNumChange} /> minutes. (max. 2880 minutes)</div>
     <button type="submit" className="homeBtn">
       {isLoadingSave ? "Loading..." : "Save Copy"}
     </button>
