@@ -24,7 +24,7 @@ const Home = () => {
 
   useEffect(()=>{
     const fetchAPI = async()=>{
-      await getData("/");
+      await getData("");
       console.log("API is working");
     };
     fetchAPI();
