@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Home.css";
 import { getData, postData } from "../Config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,6 +21,14 @@ const Home = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  useEffect(()=>{
+    const fetchAPI = async()=>{
+      await getData("/");
+      console.log("API is working");
+    };
+    fetchAPI();
+  },[]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
